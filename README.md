@@ -28,6 +28,11 @@ When you visit ```http://device-ip/cgi-bin/status``` you should now be presented
 
 Click 'Apply' to enable the hacks. 
 
+### 6. In case you used the pre-created sd-card image, you should expand the sd-card partition. Otherwise it could prevent your camera from booting with the sd-card inserted during boot. 
+      (Symptoms: no wireless connection, blue led continuously on).
+	  Expanding the partition might take a long while. The blue led will be flashing during the process of expanding the partition. When finished the blue led will be off.
+
+
 ## Background
 The modifications aim to be as least intrusive as possible. Currently there's no known recovery methode, i.e. an image to flash to the device when it doesn't boot, though you can solder wires to it and get access to a serial console. When it still boots and mounts vfat partitions automatically, limited recovery options are available through snx_autorun.sh and config files in the bootstrap folder. 
 As long as you don't completely disable the cloud apps (DISABLE_CLOUD=1), you can always revert to original behavior by simply removing the sd-card. When cloud apps are disabled and no boot scripts are found on the sd-card (i.e. when it's not inserted), nothing is started when the device boots so you will not be able to access it through the web-interface, telnet, etc.
