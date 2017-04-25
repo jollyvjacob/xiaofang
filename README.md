@@ -64,3 +64,14 @@ By default the following services are enabled:
 ## Support
 For questions, suggestions or just general discussion, please join #fanghacks on irc.freenode.net
 There's also a discord channel: https://discord.gg/xhRzpPn
+
+
+TODO's:
+* fix issues provisioning the www and cgi-bin files (link the added 3 files/folders, keep original code intact)
+* enable starting the rxtx crontab
+* add cpu usage chart to the overview page
+* create new disk image
+* add credits/about page
+* add "/media/mmcblk0p2/usr/bin" to $PATH so AWK can be executed from cgi-bin scripts.
+* replace voice files: /usr/share/notify/CN 
+	http://www.fromtexttospeech.com/ (Jenna, Fast)

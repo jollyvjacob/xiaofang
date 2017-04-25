@@ -1,0 +1,349 @@
+#!/bin/sh
+
+echo "Content-type: text/html"
+echo ""
+
+cat << EOF
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Xiaomi Xiaofang IP Camera - Status Overview</title>
+EOF
+
+/tmp/www/cgi-bin/parts/head
+
+cat << EOF
+</head>
+
+<body>
+
+    <div id="wrapper">
+
+        <!-- Navigation -->
+        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/index.html">Xiaomi Xiaofang</a>
+            </div>
+            <!-- /.navbar-header -->
+            
+EOF
+/tmp/www/cgi-bin/parts/side-menu
+cat << EOF
+        </nav>
+
+        <div id="page-wrapper">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">Dashboard</h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            <div class="row">
+                <div class="col-lg-3 col-md-6">
+                    <div class="panel panel-green">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-book fa-5x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge">
+EOF
+cat /var/log/messages | wc -l
+cat << EOF
+									</div>
+                                    <div>Messages in log</div>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="status-log-messages">
+                            <div class="panel-footer">
+                                <span class="pull-left">View log</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="panel panel-green">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-clock-o fa-5x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge">
+EOF
+
+uptime=$(cat /proc/uptime)
+uptime=${uptime%%.*}
+
+seconds=$(( uptime%60 ))
+minutes=$(( uptime/60%60 ))
+hours=$(( uptime/60/60%24 ))
+days=$(( uptime/60/60/24 ))
+
+printf '%02id %02i:%02i' $days $hours $minutes
+cat << EOF									
+									</div>
+                                    <div>Uptime</div>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="#">
+                            <div class="panel-footer">
+                                <span class="pull-left">View Details</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="panel panel-green">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-users fa-5x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge">
+EOF
+who | wc -l
+cat << EOF		
+									</div>
+                                    <div>Connected users</div>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="#">
+                            <div class="panel-footer">
+                                <span class="pull-left">View Details</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+				
+                <div class="col-lg-3 col-md-6">
+                    <div class="panel panel-green">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-cube fa-5x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge">
+EOF
+cat /usr/bin/iSC3S/app.ver | tail -n 1 | cut -d '=' -f2
+cat << EOF
+									</div>
+                                    <div>Firmware version</div>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="#">
+                            <div class="panel-footer">
+                                <span class="pull-left">View Details</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+				
+				<div class="col-lg-3 col-md-6">
+                    <div class="panel panel-green">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+EOF
+lightsensor=$(gpio_aud read 2)
+if [ "$lightsensor" -eq 1 ]
+then    
+	echo '<i class="fa fa-sun-o fa-5x" style="color:yellow"></i>'
+else
+	echo '<i class="fa fa-moon-o fa-5x" style="color:gray"></i>'
+fi
+cat << EOF								
+                                    
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge">
+EOF
+lightsensor=$(gpio_aud read 2)
+if [ "$lightsensor" -eq 1 ]
+then
+	echo Light
+else
+	echo Dark
+fi
+cat << EOF
+									</div>
+                                    <div>Light sensor</div>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="#">
+                            <div class="panel-footer">
+                                <span class="pull-left">View Details</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+                </div>				
+
+				<div class="col-lg-3 col-md-6">
+                    <div class="panel panel-green">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-spinner fa-5x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge">
+EOF
+echo $(/media/mmcblk0p2/data/bin/iostat|cut -f4 -d$'\n'|/media/mmcblk0p2/data/usr/bin/awk '{print $6"%"}')
+cat << EOF
+									</div>
+                                    <div>CPU Idle</div>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="#">
+                            <div class="panel-footer">
+                                <span class="pull-left">View Details</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+                </div>				
+				
+				<div class="col-lg-3 col-md-6">
+                    <div class="panel panel-green">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-database fa-5x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge">
+EOF
+echo $(df /media/mmcblk0p1|cut -f2 -d$'\n'|/media/mmcblk0p2/data/usr/bin/awk '{print $5}')
+mountpoint=$(df /media/mmcblk0p1|cut -f2 -d$'\n'|/media/mmcblk0p2/data/usr/bin/awk '{print $6}')
+cat << EOF
+									</div>
+                                    <div>mmcblk0p1 used</div>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="#">
+                            <div class="panel-footer">
+                                <span class="pull-left">View Details</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+                </div>	
+				
+<div class="col-lg-3 col-md-6">
+                    <div class="panel panel-green">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-database fa-5x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge">
+EOF
+echo $(df /media/mmcblk0p2|cut -f2 -d$'\n'|/media/mmcblk0p2/data/usr/bin/awk '{print $5}')
+mountpoint=$(df /media/mmcblk0p2|cut -f2 -d$'\n'|/media/mmcblk0p2/data/usr/bin/awk '{print $6}')
+cat << EOF
+									</div>
+                                    <div>mmcblk0p2 used</div>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="#">
+                            <div class="panel-footer">
+                                <span class="pull-left">View Details</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+                </div>					
+				
+            </div>
+            <!-- /.row -->
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <i class="fa fa-wifi fa-fw"></i> Network traffic
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <div id="networkTrafficChart"></div>
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+                    <!-- /.panel -->                    
+                </div>
+                <!-- /.col-lg-6 -->
+
+                <div class="col-lg-6">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <i class="fa fa-tachometer fa-fw"></i> CPU
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <div id="cpuChart"></div>
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+                    <!-- /.panel -->                    
+                </div>
+                <!-- /.col-lg-6 -->
+            </div>
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+    <!-- jQuery -->
+    <script src="../vendor/jquery/jquery.min.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="../vendor/bootstrap/js/bootstrap.min.js"></script>
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="../vendor/metisMenu/metisMenu.min.js"></script>
+
+    <!-- Morris Charts JavaScript -->
+    <script src="../vendor/raphael/raphael.min.js"></script>
+    <script src="../vendor/morrisjs/morris.min.js"></script>
+    <script src="../cgi-bin/parts/rxtxdata"></script>
+	<script src="../cgi-bin/parts/cpudata"></script>
+
+    <!-- Custom Theme JavaScript -->
+    <script src="../dist/js/sb-admin-2.js"></script>
+
+</body>
+
+</html>
+EOF

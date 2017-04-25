@@ -1,0 +1,9 @@
+#!/bin/sh
+
+echo "Content-type: text/html"
+echo ""
+
+# get posted variables 
+source ./func.cgi
+
+. /etc/${F_name}.sh

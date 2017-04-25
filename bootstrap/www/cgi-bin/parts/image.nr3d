@@ -1,0 +1,38 @@
+#!/bin/sh
+
+if [ -z $image_nr3d_intensity ]; then 
+	image_nr3d_intensity=$(/media/mmcblk0p2/data/usr/bin/awk '{printf "%d\n",$1}' /proc/isp/nr3d/intensity)
+fi
+
+if [ -z $image_nr3d_enable ]; then 
+	image_nr3d_enable=$(/media/mmcblk0p2/data/usr/bin/awk '{printf "%d\n",$1}' /proc/isp/nr3d/enable)
+fi
+
+cat << EOF
+	<form name="image.nr3d" method="POST">
+		<div class="panel panel-default">   
+			<div class="panel-heading">
+				Noise Reduction 3D
+			</div>
+			<div class="panel-body">
+				<div class="row">
+					<div class="form-group">
+						<label>							
+							<input name="image_nr3d_enable" type="hidden" value="0" />
+							<input name="image_nr3d_enable" type="checkbox" value="1" $([[ $image_nr3d_enable = "1" ]] && echo "checked" || echo "" ) />
+							Enable
+						</label>							
+					</div>
+					<div class="form-group">
+						<label>Intensity
+							<input name="image_nr3d_intensity" type="range" class="form-control" min="0" max="255" value="$image_nr3d_intensity" />
+						</label>											
+					</div>
+				</div>
+				<div class="row">
+					<button type="submit" class="btn btn-default">Submit</button>
+					<button type="reset" class="btn btn-default" disabled>Reset</button>
+				</div>
+			</div>
+		</div>
+	</form>

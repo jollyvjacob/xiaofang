@@ -1,0 +1,57 @@
+#!/bin/sh
+
+cat << EOF
+<div class="navbar-default sidebar" role="navigation">
+	<div class="sidebar-nav navbar-collapse">
+		<ul class="nav" id="side-menu">
+			<li>
+				<a href="/cgi-bin/status-overview"><i class="fa fa-info-circle fa-fw"></i>Status<span class="fa arrow"></span></a>
+				<ul class="nav nav-second-level">
+				    <li>
+						<a href="/cgi-bin/status-overview"><i class="fa fa-dashboard fa-fw"></i>Dashboard</a>
+					</li>					
+					<li>
+						<a href="/cgi-bin/status-log-messages"><i class="fa fa-book fa-fw"></i>Messages log</a>
+					</li>					
+					<li>
+						<a href="/cgi-bin/status-log-txt"><i class="fa fa-book fa-fw"></i>Text log</a>
+					</li>					
+					<li>
+						<a href="/cgi-bin/status-log-hacks"><i class="fa fa-book fa-fw"></i>Hacks log</a>
+					</li>
+					<li>
+						<a href="/cgi-bin/status-processlist"><i class="fa fa-tasks fa-fw"></i>Process list</a>
+					</li>
+				</ul>
+			</li>
+			<li>
+				<a href="/cgi-bin/cloud"><i class="fa fa-cloud fa-fw"></i>Xiaomi Mi Cloud<span class="fa arrow"></span></a>
+			</li>
+			<li>
+				<a href="/cgi-bin/ftp"><i class="fa fa-upload fa-fw"></i>FTP<span class="fa arrow"></span></a>
+			</li>
+			<li>
+				<a href="/cgi-bin/rtsp"><i class="fa fa-upload fa-fw"></i>RTSP<span class="fa arrow"></span></a>
+			</li>
+			<li>
+				<a href="/cgi-bin/network2"><i class="fa fa-upload fa-fw"></i>Network<span class="fa arrow"></span></a>
+				<ul class="nav nav-second-level">
+					<li>
+						<a href="/cgi-bin/network.wifienv"><i class="fa fa-wifi fa-fw"></i>Wifi environment</a>
+					</li>
+					<li>
+						<a href="/cgi-bin/network.hostapd"><i class="fa fa-plus fa-fw"></i>Access Point</a>
+					</li>
+				    <li>
+						<a href="/cgi-bin/network.udhcpd"><i class="fa fa-plus fa-fw"></i>DHCP</a>
+					</li>
+			</li>
+			<li>
+				<a href="/cgi-bin/image"><i class="fa fa-image fa-fw"></i>Image settings<span class="fa arrow"></span></a>
+			</li>
+		</ul>
+	</div>
+	<!-- /.sidebar-collapse -->
+</div>
+<!-- /.navbar-static-side -->
+EOF

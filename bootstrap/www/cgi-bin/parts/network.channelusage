@@ -1,0 +1,30 @@
+#!/bin/sh
+PATH="/bin:/sbin:/usr/bin:/media/mmcblk0p2/data/bin:/media/mmcblk0p2/data/sbin:/media/mmcblk0p2/data/usr/bin"
+
+cat << EOF
+	<form name="network.accesspoit" method="POST">
+		<div class="panel panel-default">   
+			<div class="panel-heading">
+				Channel usage
+			</div>
+			<div class="panel-body">
+				<div class="row">
+					<div class="form-group">
+						<label>							
+EOF
+ echo "<table>"
+ echo "<tr><th>Channel number</th><th># of AP</tj></tr>"
+ iwlist wlan0 scan | grep Frequency | sort | uniq -c | while read uses freq a b c d 
+ 
+	do	
+		echo "<tr><td>$c</td><td>$uses</td></tr>"
+	done
+  echo "</table>"
+cat << EOF
+						</label>							
+					</div>
+					
+				</div>
+			</div>
+		</div>
+	</form>

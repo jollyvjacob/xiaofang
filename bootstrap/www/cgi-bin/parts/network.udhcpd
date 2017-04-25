@@ -1,0 +1,145 @@
+#!/bin/sh
+PATH="/bin:/sbin:/usr/bin:/media/mmcblk0p2/data/bin:/media/mmcblk0p2/data/sbin:/media/mmcblk0p2/data/usr/bin"
+
+CFG_DHCPD="/media/mmcblk0p2/data/etc/udhcpd.conf"
+
+
+# get posted variables 
+source ./func.cgi
+
+if [ "${REQUEST_METHOD}" = "POST" ]
+then
+	#  update the cfg file with the posted variables
+	if [ -e $cfgfile ]; then	
+		set | grep -e '^F_udhcpd_' | while IFS='=' read name value
+		do	
+			temp="${value%\'}"
+			temp="${temp#\'}"
+			value=$temp
+
+			if [ "$value" ]; then
+				name=${name:9}
+				line=$(grep -E '^(opt|option)\s+'$name $CFG_DHCPD)
+				newline="opt $name $value"
+				if [ "$line" ]; then
+					sed -i '/'"${line}"'/s/.*/'"${newline}"'/' "${CFG_DHCPD}"
+				else
+					echo $newline >> $CFG_DHCPD
+				fi
+			fi
+		done
+
+		set | grep -e '^F_udhcpdl_' | while IFS='=' read name value
+		do	
+			temp="${value%\'}"
+			temp="${temp#\'}"
+			value=$temp
+
+			if [ "$value" ]; then
+				name=${name:10}
+				line=$(grep -E '^'$name $CFG_DHCPD)
+				newline="$name $value"
+				if [ "$line" ]; then
+					sed -i '/'"${line}"'/s/.*/'"${newline}"'/' "${CFG_DHCPD}"
+				else
+					echo $newline >> $CFG_DHCPD
+				fi
+			fi
+		done
+		
+		if [ -e "/var/run/udhcpc.pid" ]; then
+			echo "Terminating udhcpc"
+			killall udhcpc
+		  fi
+		  if [ -e "/var/run/udhcpd.pid" ]; then
+			echo "Terminating udhcpd"
+			killall udhcpd
+		fi
+		
+		udhcpc -i wlan0 -p /var/run/udhcpc.pid -b 2>&1
+		rc=$?
+		if [ $rc -ne 0 ]; then
+		  echo "Failed to start udhcpc"
+		fi
+		
+	else
+		echo "The configuration file is not present: " $cfgfile
+		return
+	fi
+fi
+
+udhcpd_router="$(cat $CFG_DHCPD | grep ^opt.*router | awk '{print $3}')"
+udhcpd_subnet="$(cat $CFG_DHCPD | grep ^opt.*subnet | awk '{print $3}')"
+udhcpd_lease="$(cat $CFG_DHCPD | grep ^opt.*lease | awk '{print $3}')"
+udhcpd_dns="$(cat $CFG_DHCPD | grep ^opt.*dns | awk '{print $3}')"
+udhcpd_hostname="$(cat $CFG_DHCPD | grep ^opt.*hostname | awk '{print $3}')"
+udhcpd_domain="$(cat $CFG_DHCPD | grep ^opt.*domain | awk '{print $3}')"
+udhcpdl_start="$(cat $CFG_DHCPD | grep ^start | awk '{print $2}')"
+udhcpdl_end="$(cat $CFG_DHCPD | grep ^end | awk '{print $2}')"
+
+cat << EOF
+	<form name="network.udhcpd" method="POST">
+		<div class="panel panel-default">   
+			<div class="panel-heading">
+				DHCP Server
+			</div>
+			<div class="panel-body">
+				<div class="row">
+					<div class="form-group">
+						<label>		
+							DNS primary
+						</label>
+						<input type="text" name="udhcpd_dns" class="form-control" value="$udhcpd_dns">
+					</div>
+					
+					<div class="form-group">
+						<label>		
+							Subnet
+						</label>
+						<input type="text" name="udhcpd_subnet" class="form-control" value="$udhcpd_subnet">
+					</div>
+					
+					<div class="form-group">
+						<label>		
+							Router
+						</label>
+						<input id="router" name="udhcpd_router" type="text" class="form-control" value="$udhcpd_router">
+					</div>
+					
+					<div class="form-group">
+						<label>		
+							Lease
+						</label>
+						<input id="lease" name="udhcpd_lease" type="text" class="form-control" value="$udhcpd_lease">
+					</div>
+					
+					<div class="form-group">
+						<label>		
+							Hostname
+						</label>
+						<input name="udhcpd_hostname" class="form-control" type="text" value="$udhcpd_hostname">
+					</div>
+					
+					<div class="form-group">
+						<label>		
+							Domain
+						</label>
+						<input name="udhcpd_domain" class="form-control" type="text" value="$udhcpd_domain">
+					</div>
+					
+					<div class="form-group">
+						<label>		
+							IP lease block
+						</label>
+						<input name="udhcpdl_start" class="form-control" type="text" value="$udhcpdl_start">
+						<input name="udhcpdl_end" class="form-control" type="text" value="$udhcpdl_end">
+					</div>
+					
+				</div>
+				<div class="row">
+					<button type="submit" class="btn btn-default">Submit</button>
+					<button type="reset" class="btn btn-default" disabled>Reset</button>
+				</div>
+			</div>
+		</div>
+	</form>

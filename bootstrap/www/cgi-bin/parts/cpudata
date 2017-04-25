@@ -1,0 +1,71 @@
+#!/bin/sh
+
+echo Content-type: text/javascript
+echo ""
+
+logfile=/media/mmcblk0p2/data/samples
+if [ -e "$logfile" ]; then
+cat << EOF
+	\$(function() {
+		Morris.Bar({element: 'cpuChart',data: [
+EOF
+count=0
+total=0
+p_cu=-1
+p_cn=-1
+p_cs=-1
+p_ci=-1
+tail -n 100 $logfile | while read timestamp rx tx cpuuser cpunice cpusystem cpuidle
+do
+   #calculate delta
+   if [ $p_cu -ne -1 ]; then
+      d_cu=$((cpuuser-p_cu))
+      d_cn=$((cpunice-p_cn))
+      d_cs=$((cpusystem-p_cs))
+      d_ci=$((cpuidle-p_ci))
+      total=$((d_cu + d_cn + d_cs + d_ci))
+
+	  if [ $total -ne 0 ]; then
+		  if [ $count -ne 0 ] 
+		  then
+			printf ",\n"
+		  fi
+		  
+		  perc_cu=$((d_cu*100/total))
+		  perc_cn=$((d_cn*100/total))
+		  perc_cs=$((d_cs*100/total))
+		  perc_idle=$((100-perc_cu-perc_cn-perc_cs))
+
+		  printf "\t{ "
+		  printf "timestamp: '%s', " $timestamp
+		  printf "user: '%s', " $perc_cu
+		  printf "nice: '%s', " $perc_cn
+		  printf "system: '%s', " $perc_cs
+		  printf "idle: '%s'}" $perc_idle
+		  count=$((count+1))   
+	  fi
+   fi
+   
+   p_cu=$cpuuser;
+   p_cn=$cpunice;
+   p_cs=$cpusystem;
+   p_ci=$cpuidle;
+   
+done
+
+cat << EOF
+		],
+        xkey: 'timestamp',
+        ykeys: ['user', 'nice','system','idle'],
+        labels: ['user', 'nice','system','idle'],
+		postUnits: [' %'],
+		barColors: ['#FF8080','#8080FF','#FF80FF','#E0E0E0'],
+		stacked : true,
+        hideHover: 'auto',
+        resize: true
+    });
+});
+EOF
+	else
+		echo '$("#cpuChart").html("No data available");'
+fi

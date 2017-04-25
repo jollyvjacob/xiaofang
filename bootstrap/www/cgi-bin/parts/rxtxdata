@@ -1,0 +1,57 @@
+#!/bin/sh
+
+echo Content-type: text/javascript
+echo ""
+
+logfile=/media/mmcblk0p2/data/samples
+if [ -e "$logfile" ]; then
+cat << EOF
+	\$(function() {
+		Morris.Line({element: 'networkTrafficChart',data: [
+EOF
+count=0
+prx=-1
+ptx=-1
+tail -n 100 $logfile | while read timestamp rx tx cpuuser cpunice cpusystem cpuidle
+do
+   #calculate delta
+   drx=$((rx-prx));
+   dtx=$((tx-ptx));
+   
+   if [ "$count" -ne "0" ] 
+   then
+      printf ",\n"
+   fi
+   
+   if [ "$prx" -ne "-1" ]
+   then
+      printf "\t{ "
+      printf "timestamp: '%s', " $timestamp
+      printf "rx: '%s', " $((drx / 61440))
+      printf "tx: '%s' }" $((dtx / 61440))
+      count=$((count+1))   
+   fi
+   
+   prx=$rx
+   ptx=$tx
+   
+done
+
+cat << EOF
+		],
+        xkey: 'timestamp',
+        ykeys: ['rx', 'tx'],
+        labels: ['RX', 'TX'],
+		postUnits: [' kBs'],
+		lineColors: ['green','blue'],
+		pointFillColors:['#ffffff'],
+        pointStrokeColors: ['black'],
+        pointSize: 2,
+        hideHover: 'auto',
+        resize: true
+    });
+});
+EOF
+	else
+		echo '$("#networkTrafficChart").html("No data available");'
+fi

@@ -79,10 +79,10 @@ if [ -e "$CFG_CLIENT" ]; then
 fi
 
 cat << EOF
-<!DOCTYPE html>
 <html>
 <head>
 <title>Fang Hacks</title>
+<head>
 <style type="text/css">
 body { background-color: #B0E0E6; font-family: verdana, sans-serif; }
 .err { color: red; }
@@ -239,7 +239,7 @@ cat << EOF
 	
 window.onload = onLoad;
 </script>
-</head>
+
 <body>
 <h1>Network Settings</h1>
 <hr/>
@@ -280,10 +280,10 @@ echo "<option value='' disabled selected style='display:none;'>Label</option>"
 
 hidden=""
 while read x; do
-  SSID=$(echo "$x" | cut -f1)
-  ADDR=$(echo "$x" | cut -f2)
-  ENC=$(echo "$x" | cut -f3)
-  QUAL=$(echo "$x" | cut -f4)
+  SSID=$(echo $x | cut -d' ' -f1)
+  ADDR=$(echo $x | cut -d' ' -f2)
+  ENC=$(echo $x | cut -d' ' -f3)
+  QUAL=$(echo $x | cut -d' ' -f4)
   echo "<option id=\"${SSID}_OPT\">$SSID</option>"
   hidden="$hidden 
          <input type='hidden' id=\"${SSID}_QUAL\" value=\"$QUAL\"/> 

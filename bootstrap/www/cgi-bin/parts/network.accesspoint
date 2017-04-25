@@ -1,0 +1,120 @@
+#!/bin/sh
+PATH="/bin:/sbin:/usr/bin:/media/mmcblk0p2/data/bin:/media/mmcblk0p2/data/sbin:/media/mmcblk0p2/data/usr/bin"
+CFG_AP="/media/mmcblk0p2/data/etc/	"
+
+#beacon_int="100"
+#hw_mode="g"
+P_channel=6
+#ieee80211n=1
+#wme_enabled=1
+#ht_capab=[SHORT-GI-20][SHORT-GI-40]
+#max_num_sta=8
+P_ssid=xiaofang
+#auth_algs=1
+#wpa=3
+#wpa_key_mgmt=WPA-PSK
+#wpa_pairwise=TKIP
+#rsn_pairwise=CCMP
+P_wpa_passphrase=xiaofang
+
+#//http://www.linuxjournal.com/content/wi-fi-command-line
+#// sudo iwlist wlan0 scan | grep Frequency | sort | uniq -c | sort -n
+#sudo iwlist wlan0 scanning | grep -i Channel
+
+
+#iwlist wlan0 auth		// WPA/WPA2/CIPHER-TKIP/CIPHER-CCMP
+
+cat << EOF
+	<form name="network.accesspoit" method="POST">
+		<div class="panel panel-default">   
+			<div class="panel-heading">
+				Access Point
+			</div>
+			<div class="panel-body">
+				<div class="row">
+					<div class="form-group">
+						<label>		
+							Mode
+						</label>
+							<select name="mode" class="form-control">
+								<option value="a">802.11a</option>
+								<option value="b">802.11b</option>
+								<option value="g">802.11g</option>
+								<option value="n">802.11n</option>
+							</select>
+					</div>
+					
+					<div class="form-group">
+						<label for="hideSSID">		
+							Hide SSID
+						</label>
+						<input id="hideSSID" name="hideSSID" type="checkbox" class="form-control">
+					
+						<label for="macaddr_acl">
+							Mac filtering
+						</label>
+						<input id="macaddr_acl" name="macaddr_acl" type="checkbox" class="form-control">
+					</div>
+					
+					<div class="form-group">					
+						<label>		
+							Channel
+						</label>
+						<select name="channel" class="form-control">
+EOF
+ iwlist wlan0 channel | tail -n +2 | while read channellabel channelstr colon rest
+	do	
+	if [ "$channellabel" ]; then
+		if [ $channellabel == "Channel" ]; then
+		   channel=$(echo $channelstr|sed 's/^0*//')
+		   selected=""
+		   if [ $channel == $P_channel ]; then
+			   selected="selected"
+		   fi
+		   echo "<option value=\""$channel"\" $selected>$channellabel $channel ($rest)</option>"
+		fi
+	fi
+	done
+cat << EOF
+							</select>
+						</label>							
+					</div>
+					
+					<div class="form-group">
+						<label>		
+							SSID
+						</label>
+						<input name="ssid" class="form-control" type="text" value="$P_ssid">
+					</div>
+					
+					<div class="form-group">
+						<label>		
+							Security
+						</label>
+						<select name="security" class="form-control">
+							<option value="wep">WEP</option>
+							<option value="wpa_personal">WPA Personal<option>
+							<option value="wpa_enterprise">WPA Enterprise<option>
+							<option value="wpa2_personal">WPA2 Personal<option>
+							<option value="wpa2_enterprise">WPA2 Enterprise<option>
+							<option value="wpaX_personal">WPA / WPA2 Personal<option>
+							<option value="wpaX_enterprise">WPA / WPA2 Enterprise<option>
+							<option value="radius">Radius<option>
+						</select>
+					</div>
+					
+					<div class="form-group">
+						<label>		
+							Shared Key
+						</label>
+						<input name="password" type="text" value="$P_wpa_passphrase" class="form-control">
+					</div>
+					
+				</div>
+				<div class="row">
+					<button type="submit" class="btn btn-default">Submit</button>
+					<button type="reset" class="btn btn-default" disabled>Reset</button>
+				</div>
+			</div>
+		</div>
+	</form>

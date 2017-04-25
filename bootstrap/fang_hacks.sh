@@ -108,19 +108,12 @@ else
   /tmp/boa >/dev/null 2>&1
 fi
 
-# Link cgi files again if available (/tmp is volatile)
-CGI_FILES="/media/mmcblk0p1/bootstrap/www"
-if [ -d "$CGI_FILES" ]; then
-  for i in $CGI_FILES/*; do
-    if [ ! -e "/tmp/www/cgi-bin/$(basename $i)" ]; then
-      logmsg "Linking $i -> /tmp/www/cgi-bin/$(basename $i)"
-      ln -sf "$i" "/tmp/www/cgi-bin/$(basename $i)"
-    else
-      logmsg "Not linking $i: already exists"
-    fi
-  done
+# Link www and cgi files again if available (/tmp is volatile)
+WWW_FILES="/media/mmcblk0p1/bootstrap/www/"
+if [ -d "$WWW_FILES" ]; then  
+  cp -rs $WWW_FILES /tmp/
 else
-  logmsg "CGI scripts not found in $CGI_FILES!"
+  logmsg "WWW file not found in $WWW_FILES!"
 fi
 
 if [ $HACKS_ENABLED -ne 1 ]; then
@@ -170,6 +163,14 @@ if [ -e "$src" ]; then
   logmsg "Overwriting configuration file $src -> $tgt"
   mv "$src" "$tgt"
 fi
+
+src="/media/mmcblk0p1/bootstrap/image.cfg"
+tgt="/etc/image.cfg"
+if [ -e "$src" ]; then
+  logmsg "Overwriting configuration file $src -> $tgt"
+  mv "$src" "$tgt"
+fi
+
 
 if ! type patch >/dev/null; then
   logmsg "Patch command not found! Patches will not be applied."

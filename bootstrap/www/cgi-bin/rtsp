@@ -1,0 +1,177 @@
+#!/bin/sh
+
+echo "Content-type: text/html"
+echo ""
+
+# get posted variables 
+source ./func.cgi
+
+#  update the cfg file with the posted variables
+cfgfile=/etc/image.cfg
+if [ -e $cfgfile ]; then	
+	set | grep -e '^F_' | while IFS='=' read name value
+	do	
+		temp="${value%\'}"
+		temp="${temp#\'}"
+		value=$temp
+		sed -i -e '/'${name:2}'=/ s/=.*/='${value}'/' $cfgfile
+	done	
+	
+	source $cfgfile
+else
+	echo "The configuration file is not present: " $cfgfile
+	return
+fi
+
+
+cat << EOF
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Xiaomi Xiaofang IP Camera - RTSP settings</title>
+EOF
+
+source /tmp/www/cgi-bin/parts/head
+
+cat << EOF
+</head>
+
+<body>
+
+    <div id="wrapper">
+
+        <!-- Navigation -->
+        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="index.html">Xiaomi Xiaofang</a>
+            </div>
+            <!-- /.navbar-header -->
+EOF
+source /tmp/www/cgi-bin/parts/side-menu
+cat << EOF
+        </nav>
+
+        <div id="page-wrapper">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">RTSP settings</h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            <div  class="row">
+                <div class="col-lg-3">
+					<div class="form-group">
+						<label>Number of frame queue</label>
+						<input type="text" name="Q" class="form-control" value="$F_Q">						
+					</div>
+					
+					<div class="form-group">
+						<label>Unicast url</label>
+						<input type="text" name="u" class="form-control" value="$F_u">
+					</div>
+				
+					<div class="form-group">
+						<label>Multicast group</label>
+						<input type="text" name="M" class="form-control" value="$F_M">
+					</div>
+					
+					<div class="form-group">
+						<label>RTSP port</label>
+						<input type="text" name="P" class="form-control" value="$F_P">
+					</div>
+					
+					<div class="form-group">
+						<label>RTSP over HTTP port</label>
+						<input type="text" name="T" class="form-control" value="$F_T">
+					</div>
+					
+					<div class="form-group">
+						<label>V4L2 capture framerate</label>
+						<input type="text" name="F" class="form-control" value="$F_F">
+					</div>
+					
+					<div class="form-group">
+						<label>ISP capture framerate</label>
+						<input type="text" name="i" class="form-control" value="$F_i">
+					</div>
+					
+					<div class="form-group">
+						<label>Capture width</label>
+						<input type="text" name="W" class="form-control" value="$F_W">
+					</div>
+					
+					<div class="form-group">
+						<label>Capture height</label>
+						<input type="text" name="H" class="form-control" value="$F_H">
+					</div>
+					
+					<div class="form-group">
+						<label>Capture bitrate kbps</label>
+						<input type="text" name="b" class="form-control" value="$F_b">
+					</div>
+					
+					<div class="form-group">
+						<label>Capture gop</label>
+						<input type="text" name="g" class="form-control" value="$F_g">
+					</div>
+					
+					<div class="form-group">
+						<label>MJPEG streaming and qp</label>
+						<input type="text" name="j" class="form-control" value="$F_j">
+					</div>
+					
+					<div class="form-group">
+						<label>Capture path enable</label>
+						<input type="text" name="c" class="form-control" value="$F_c">
+					</div>
+					
+					<div class="form-group">
+						<label>Encode scale</label>
+						<input type="text" name="s" class="form-control" value="$F_s">
+					</div>
+					
+					<div class="form-group">
+						<label>Enable A-law pcm streaming</label>
+						<input type="text" name="a" class="form-control" value="$F_a">
+					</div>
+					
+				</div>
+				
+            </div>
+            <!-- /.row -->
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+    
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="../vendor/bootstrap/js/bootstrap.min.js"></script>
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="../vendor/metisMenu/metisMenu.min.js"></script>
+
+    <!-- Custom Theme JavaScript -->
+    <script src="/dist/js/sb-admin-2.js"></script>
+
+EOF
+
+# If this was a post we should reapply the settings for this page
+if [ "$REQUEST_METHOD" = "POST" ]; then
+	echo '<script>$.ajax({type: "POST",url: "/cgi-bin/apply",data: {name : "rtsp"},success: function(){alert("applied");},error:function(){alert("error");}});</script>';
+fi
+cat << EOF
+	
+</body>
+
+</html>
+EOF

@@ -1,0 +1,82 @@
+#!/bin/sh
+
+if [ -z $image_brightness ]; then 
+	image_brightness=$(/media/mmcblk0p2/data/usr/bin/awk '{printf "%d\n",$1}' /proc/isp/filter/brightness)
+fi
+
+if [ -z $image_contrast ]; then 
+	image_contrast=$(/media/mmcblk0p2/data/usr/bin/awk '{printf "%d\n",$1}' /proc/isp/filter/contrast)
+fi
+
+if [ -z $image_gamma ]; then 
+	image_gamma=$(/media/mmcblk0p2/data/usr/bin/awk '{printf "%d\n",$1}' /proc/isp/filter/gamma)
+fi
+
+if [ -z $image_hue ]; then 
+	image_hue=$(/media/mmcblk0p2/data/usr/bin/awk '{printf "%d\n",$1}' /proc/isp/filter/hue)
+fi
+
+if [ -z $image_saturation ]; then 
+	image_saturation=$(/media/mmcblk0p2/data/usr/bin/awk '{printf "%d\n",$1}' /proc/isp/filter/saturation)
+fi
+
+if [ -z $image_sharpness ]; then 
+	image_sharpness=$(/media/mmcblk0p2/data/usr/bin/awk '{printf "%d\n",$1}' /proc/isp/filter/sharpness)
+fi
+
+cat << EOF
+	<form name="image.picture" method="POST">
+		<div class="panel panel-default">   
+			<div class="panel-heading">
+				Picture
+			</div>
+			<div class="panel-body">
+				<div class="row">
+					<div class="form-group">
+						<label>Brightness
+							<input name="image_brightness" type="range" class="form-control" min="0" max="127" value="$image_brightness" />
+						</label>											
+					</div>
+					<div class="form-group">
+						<label>
+							<i class="fa fa-adjust fa-fw"></i>Contrast
+							<input name="image_contrast" type="range" class="form-control" min="0" max="255" value="$image_contrast" />
+						</label>							
+					</div>
+					
+					<div class="form-group">
+						<label>
+							<i class="fa fa-adjust fa-fw"></i>Gamma
+							<input name="image_gamma" type="range" class="form-control" min="76" max="255" value="$image_gamma" />
+						</label>
+					</div>
+					
+					<div class="form-group">
+						<label>
+							Hue
+							<input name="image_hue" type="range" class="form-control" min="0" max="255" value="$image_hue" />
+						</label>
+					</div>
+										
+					<div class="form-group">
+						<label>
+							Saturation
+							<input name="image_saturation" type="range" class="form-control" min="0" max="255" value="$image_saturation" />
+						</label>											
+					</div>
+										
+					<div class="form-group">
+						<label>
+							Sharpness
+							<input name="image_sharpness" type="range" class="form-control" min="0" max="6" value="$image_sharpness" />
+						</label>											
+					</div>
+					
+				</div>
+				<div class="row">
+					<button type="submit" class="btn btn-default">Submit</button>
+					<button type="reset" class="btn btn-default" disabled>Reset</button>
+				</div>
+			</div>
+		</div>
+	</form>

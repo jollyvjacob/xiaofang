@@ -1,0 +1,87 @@
+#!/bin/sh
+
+echo "Content-type: text/html"
+echo ""
+
+# get posted variables 
+source ./func.cgi
+
+cat << EOF
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Xiaomi Xiaofang IP Camera - Network DHCP</title>
+EOF
+
+source /tmp/www/cgi-bin/parts/head
+
+cat << EOF
+</head>
+
+<body>
+
+    <div id="wrapper">
+
+        <!-- Navigation -->
+        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="index.html">Xiaomi Xiaofang</a>
+            </div>
+            <!-- /.navbar-header -->
+EOF
+source /tmp/www/cgi-bin/parts/side-menu
+cat << EOF
+        </nav>
+
+        <div id="page-wrapper">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">DHCP settings</h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            <div  class="row">
+				<div class="col-lg-3">
+EOF
+source /tmp/www/cgi-bin/parts/network.udhcpd
+cat << EOF			
+				</div>
+				
+				
+            </div>
+            <!-- /.row -->
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+    
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="../vendor/bootstrap/js/bootstrap.min.js"></script>
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="../vendor/metisMenu/metisMenu.min.js"></script>
+
+    <!-- Custom Theme JavaScript -->
+    <script src="/dist/js/sb-admin-2.js"></script>
+EOF
+
+# If this was a post we should reapply the settings for this page
+if [ "$REQUEST_METHOD" = "POST" ]; then
+	echo '<script>$.ajax({type: "POST",url: "/cgi-bin/apply",data: {name : "network"},success: function(){alert("applied");},error:function(){alert("error");}});</script>';
+fi
+cat << EOF
+	
+</body>
+
+</html>
+EOF

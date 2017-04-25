@@ -1,0 +1,62 @@
+#!/bin/sh
+
+flags=0
+curflags=$(/media/mmcblk0p2/data/usr/bin/awk '{printf "%d\n",$1}' /proc/isp/mirror-flip/mode)
+if [ -z $image_mirror ]; then 
+	case "$curflags" in 
+	   "0")
+	   image_mirror=0
+	   ;;
+	   "1")
+	   image_mirror=0
+	   ;;
+	   "2")
+	   image_mirror=1
+	   ;;
+	   "3")
+	   image_mirror=1
+	   ;;
+	esac	
+fi
+
+if [ -z $image_flip ]; then 
+	case "$curflags" in 
+	   "0")
+	   image_flip=0
+	   ;;
+	   "1")
+	   image_flip=1
+	   ;;
+	   "2")
+	   image_flip=0
+	   ;;
+	   "3")
+	   image_flip=1
+	   ;;
+	esac			
+fi
+
+
+cat << EOF
+	<form name="image.mirrorflip" method="POST">
+		<div class="panel panel-default">   
+			<div class="panel-heading">
+				Mirror and Flip
+			</div>
+			<div class="panel-body">
+				<div class="row">
+					<div class="form-group">
+						<input type='hidden' value='0' name='image_flip'>
+						<label><input name="image_flip" type="checkbox" class="form-control" $([[ $image_flip = "1" ]] && echo "checked" || echo "" ) value='1'/><i class="fa fa-arrows-v fa-fw"></i>Flip</label>
+					
+						<input type='hidden' value='0' name='image_mirror'>
+						<label><input name="image_mirror" type="checkbox" class="form-control" $([[ $image_mirror = "1" ]] && echo "checked" || echo "" ) value='1'/><i class="fa fa-arrows-h fa-fw"></i>Mirror</label>
+					</div>
+				</div>
+				<div class="row">
+					<button type="submit" class="btn btn-default">Submit</button>
+					<button type="reset" class="btn btn-default" disabled>Reset</button>
+				</div>
+			</div>
+		</div>
+	</form>

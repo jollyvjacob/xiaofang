@@ -1,0 +1,106 @@
+#!/bin/sh
+
+cat << EOF
+	<form name="rtsp" method="POST">
+		<div class="panel panel-default">   
+			<div class="panel-heading">
+				Resolution
+			</div>
+			<div class="panel-body">
+				<div class="row">
+					<div class="form-group">
+						<label>														
+							Width
+							<input name="rtsp_width" type="text" value="1920" />							
+							Height
+							<input name="rtsp_width" type="text" value="1080" />							
+						</label>							
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="panel panel-default">   
+			<div class="panel-heading">
+				Frame queue
+			</div>
+			<div class="panel-body">
+				<div class="row">
+					<div class="form-group">
+						<label>														
+							Number of frame queue
+							<input name="rtsp_q" type="text" value="10" />							
+						</label>							
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="panel panel-default">   
+			<div class="panel-heading">
+				Unicast
+			</div>
+			<div class="panel-body">
+				<div class="row">
+					<div class="form-group">
+						<label>														
+							Unicast url
+							<input name="rtsp_url" type="text" value="unicast"" />							
+						</label>							
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="panel panel-default">   
+			<div class="panel-heading">
+				Multicast
+			</div>
+			<div class="panel-body">
+				<div class="row">
+					<div class="form-group">
+						<label>														
+							Multicast url
+							<input name="rtsp_url" type="text" value="unicast"" />							
+						</label>							
+					</div>
+					
+					<div class="form-group">
+						<label>														
+							Multicast group
+							<input name="rtsp_url" type="text" value="multicast" />							
+						</label>							
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="panel panel-default">   
+			<div class="panel-heading">
+				Multicast
+			</div>
+			<div class="panel-body">
+				<div class="row">
+					<div class="form-group">
+						<label>														
+							RTSP port
+							<input name="rtsp_port" type="text" value="554" />							
+						</label>							
+					</div>
+					
+					<div class="form-group">
+						<label>														
+							RTSP over HTTP port
+							<input name="rtsp_url" type="text" value="0" />							
+						</label>							
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="row">
+			<button type="submit" class="btn btn-default">Submit</button>
+			<button type="reset" class="btn btn-default" disabled>Reset</button>
+		</div>
+		
+	</form>
